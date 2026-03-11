@@ -6,7 +6,7 @@
 
 † Corresponding author
 
-**CVPR 2026** | [arXiv](https://arxiv.org/abs/2602.21917) | [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CVPR 2026](https://img.shields.io/badge/CVPR-2026-blue.svg)](https://cvpr.thecvf.com/) [![arXiv](https://img.shields.io/badge/arXiv-2602.21917-b31b1b.svg)](https://arxiv.org/abs/2602.21917) [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
@@ -145,23 +145,20 @@ datasets/
 ## Training
 
 ```bash
-# Deblurring
-bash train.sh uhdblur 0,1
+export CUDA_VISIBLE_DEVICES=0,1   # set your GPU IDs here
 
-# Deraining
-bash train.sh uhdrain 0,1
-
-# Dehazing
-bash train.sh uhdhaze 0,1
-
-# Low-light Enhancement
-bash train.sh uhdlol 0,1
+bash train.sh uhdblur             # Deblurring
+bash train.sh uhdrain             # Deraining
+bash train.sh uhdhaze             # Dehazing
+bash train.sh uhdlol              # Low-light Enhancement
 ```
 
 Or run directly:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch \
+export CUDA_VISIBLE_DEVICES=0,1
+
+python -m torch.distributed.launch \
     --nproc_per_node=2 \
     --master_port=4337 \
     basicsr/train.py -opt options/train_C2SSM_uhdblur.yml --launcher pytorch
@@ -187,6 +184,7 @@ python inference.py \
     -i datasets/uhddeblur/test/input \
     -g datasets/uhddeblur/test/gt \
     -w pretrained_models/C2SSM_uhdblur.pth \
+    -o results/uhddeblur \
     --save_img
 
 # Deraining
@@ -194,6 +192,7 @@ python inference.py \
     -i datasets/4K-Rain13k/test/input \
     -g datasets/4K-Rain13k/test/target \
     -w pretrained_models/C2SSM_uhdrain.pth \
+    -o results/uhdrain \
     --save_img
 ```
 
