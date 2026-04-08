@@ -65,7 +65,7 @@ def pairwise_cos_sim(x1: torch.Tensor, x2: torch.Tensor):
     return sim
 
 
-class SparseStateSpaceModule(nn.Module):
+class ClusterCentricScanningModule(nn.Module):
     def __init__(
             self,
             d_model,
@@ -207,19 +207,19 @@ class SparseStateSpaceModule(nn.Module):
     def forward_core(self, x):
         value = self.v(x)
         x = self.f(x)
-        x = rearrange(x, "b (e c) w h -> (b e) c w h", e=self.heads)
-        value = rearrange(value, "b (e c) w h -> (b e) c w h", e=self.heads)
+        x = rearrange(x, "b (e c) h w -> (b e) c h w", e=self.heads)
+        value = rearrange(value, "b (e c) h w -> (b e) c h w", e=self.heads)
         if self.fold_hw > 1:
             # split the big feature maps to small local regions to reduce computations.
             b0, c0, w0, h0 = x.shape
             assert w0 % self.fold_hw == 0 and h0 % self.fold_hw == 0, \
                 f"Ensure the feature map size ({w0}*{h0}) can be divided by fold {self.fold_hw}*{self.fold_hw}"
-            x = rearrange(x, "b c (f1 w) (f2 h) -> (b f1 f2) c w h", f1=self.fold_hw,
+            x = rearrange(x, "b c (f1 h) (f2 w) -> (b f1 f2) c h w", f1=self.fold_hw,
                           f2=self.fold_hw)  # [bs*blocks,c,ks[0],ks[1]]
-            value = rearrange(value, "b c (f1 w) (f2 h) -> (b f1 f2) c w h", f1=self.fold_hw, f2=self.fold_hw)
+            value = rearrange(value, "b c (f1 h) (f2 w) -> (b f1 f2) c h w", f1=self.fold_hw, f2=self.fold_hw)
         b, c, w, h = x.shape
-        centers = self.centers_proposal(x)  # [b,c,C_W,C_H], we set M = C_W*C_H and N = w*h
-        value_centers = rearrange(self.centers_proposal(value), 'b c w h -> b (w h) c')  # [b,C_W,C_H,c]
+        centers = self.centers_proposal(x)  # [b,c,C_H,C_W], we set M = C_W*C_H and N = w*h
+        value_centers = rearrange(self.centers_proposal(value), 'b c h w -> b (h w) c')  # [b,C_H,C_W,c]
         b, c, ww, hh = centers.shape
 
         sim = torch.sigmoid(
@@ -235,7 +235,7 @@ class SparseStateSpaceModule(nn.Module):
         mask = torch.zeros_like(sim)  # binary #[B,M,N]
         mask.scatter_(1, sim_max_idx, 1.)
         sim = sim * mask
-        value2 = rearrange(value, 'b c w h -> b (w h) c')  # [B,N,D]
+        value2 = rearrange(value, 'b c h w -> b (h w) c')  # [B,N,D]
         # aggregate step, out shape [B,M,D]
         out = ((value2.unsqueeze(dim=1) * sim.unsqueeze(dim=-1)).sum(dim=2) + value_centers) / (sim.sum(dim=-1, keepdim=True) + 1.0)  # [B,M,D]
         B, L, C = out.shape
@@ -263,12 +263,12 @@ class SparseStateSpaceModule(nn.Module):
         out = rearrange(out_y[:,0], "b c l -> b l c")
 
         out = (out.unsqueeze(dim=2) * sim.unsqueeze(dim=-1)).sum(dim=1)  # [B,N,D]
-        out = rearrange(out, "b (w h) c -> b c w h", w=w)
+        out = rearrange(out, "b (h w) c -> b c h w", h=h, w=w)
 
         if self.fold_hw > 1:
             # recover the splited regions back to big feature maps if use the region partition.
-            out = rearrange(out, "(b f1 f2) c w h -> b c (f1 w) (f2 h)", f1=self.fold_hw, f2=self.fold_hw)
-        out = rearrange(out, "(b e) c w h -> b (e c) w h", e=self.heads)
+            out = rearrange(out, "(b f1 f2) c h w -> b c (f1 h) (f2 w)", f1=self.fold_hw, f2=self.fold_hw)
+        out = rearrange(out, "(b e) c h w -> b (e c) h w", e=self.heads)
         out = self.proj(out)
         return out
 
@@ -347,7 +347,7 @@ class SparseMambaBlock(nn.Module):
         self.use_attn = use_attn
         if self.use_attn:   
             self.norm1 = LayerNorm(feature_dim)
-            self.SSSM = SparseStateSpaceModule(feature_dim, proposal_hw, fold_hw, heads)
+            self.SSSM = ClusterCentricScanningModule(feature_dim, proposal_hw, fold_hw, heads)
             self.chan_attn = ChannelAttention(feature_dim)
             self.spat_attn = SpatialAttention()
             self.conv_1 = nn.Conv2d(feature_dim, feature_dim, 1, 1, 0)

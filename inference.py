@@ -77,9 +77,10 @@ def main():
 
         file_name = os.path.basename(path)
         gt_img = cv2.imread(os.path.join(args.gt, file_name), cv2.IMREAD_UNCHANGED)
-
+    
         img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-        img_tensor = img2tensor(img).to(device) / 255.
+
+        img_tensor = img2tensor(img, bgr2rgb=False).to(device) / 255.
         img_tensor = img_tensor.unsqueeze(0)
         b, c, h, w = img_tensor.size()
         img_tensor = check_image_size(img_tensor)
@@ -88,7 +89,7 @@ def main():
             output = model.forward(img_tensor)
 
         output = output[:, :, :h, :w]
-        output_img = tensor2img(output)
+        output_img = tensor2img(output, rgb2bgr=False)
 
         ssim = ssim_gray(output_img, gt_img)
         psnr = psnr_gray(output_img, gt_img)
