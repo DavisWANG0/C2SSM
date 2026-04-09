@@ -31,9 +31,7 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 ## Results
 
 ### UHD-Blur
-<details>
-<summary><strong>Low-light UHD Image Enhancement</strong> (click to expand) </summary>
-<p align='center'>
+
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
 | MIMO-Unet++ | non-UHD | ICCV'21 | 25.03 | 0.752 | 16.1M |
@@ -43,7 +41,6 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | DreamUHD | UHD | AAAI'25 | 29.33 | 0.852 | 1.45M |
 | ERR | UHD | CVPR'25 | 29.72 | 0.861 | 1.13M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **31.53** | **0.890** | **2.71M** |
-</details>
 
 ### 4K-Rain13k
 
