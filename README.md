@@ -30,7 +30,10 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 
 ## Results
 
-### UHD-Blur
+Click a dataset below to expand its benchmark table.
+
+<details>
+<summary><strong>UHD-Blur</strong></summary>
 
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
@@ -42,7 +45,10 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | ERR | UHD | CVPR'25 | 29.72 | 0.861 | 1.13M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **31.53** | **0.890** | **2.71M** |
 
-### 4K-Rain13k
+</details>
+
+<details>
+<summary><strong>4K-Rain13k</strong></summary>
 
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
@@ -54,7 +60,10 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | ERR | UHD | CVPR'25 | 34.48 | 0.952 | 1.13M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **35.13** | **0.956** | **2.71M** |
 
-### UHD-Haze
+</details>
+
+<details>
+<summary><strong>UHD-Haze</strong></summary>
 
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
@@ -64,7 +73,10 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | UHD-processer | UHD | CVPR'25 | 23.24 | **0.953** | 1.6M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **24.08** | **0.942** | **2.71M** |
 
-### UHD-LOL4K
+</details>
+
+<details>
+<summary><strong>UHD-LOL4K</strong></summary>
 
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
@@ -76,7 +88,10 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | D2Net | UHD | WACV'25 | 37.73 | **0.992** | 5.22M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **39.61** | **0.992** | **2.71M** |
 
-### UHD-Snow
+</details>
+
+<details>
+<summary><strong>UHD-Snow</strong></summary>
 
 | Methods | Type | Venue | PSNR | SSIM | Param |
 |---------|------|-------|------|------|-------|
@@ -84,6 +99,8 @@ Ultra-High-Definition (UHD) image restoration is trapped in a scalability crisis
 | UHDformer | UHD | AAAI'24 | 36.61 | 0.988 | 0.34M |
 | UHDDIP | UHD | TCSVT'25 | 41.56 | **0.990** | 0.81M |
 | **C2SSM (Ours)** | **UHD** | **CVPR'26** | **42.45** | **0.990** | **2.71M** |
+
+</details>
 
 ## Installation
 
