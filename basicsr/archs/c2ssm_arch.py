@@ -451,7 +451,7 @@ class C2SSM(nn.Module):
         latent = self.latent(out_enc_level3)
         inp_dec_level3 = torch.cat([latent, out_enc_level3], 1)
         inp_dec_level3 = self.reduce_chan_level3(inp_dec_level3)
-        out_dec_level3 = self.decoder_level3(latent)
+        out_dec_level3 = self.decoder_level3(inp_dec_level3)
         inp_dec_level2 = self.up3_2(out_dec_level3)
 
         inp_dec_level2 = torch.cat([inp_dec_level2, out_enc_level2], 1)
